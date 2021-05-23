@@ -3,14 +3,16 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles } from '@material-ui/core/styles';
+import { ReactSearchAutocomplete } from 'react-search-autocomplete'
+
 
 // ISO 3166-1 alpha-2
 // ⚠️ No support for IE 11
 function countryToFlag(isoCode) {
   return typeof String.fromCodePoint !== 'undefined'
     ? isoCode
-        .toUpperCase()
-        .replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + 127397))
+      .toUpperCase()
+      .replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + 127397))
     : isoCode;
 }
 
@@ -24,36 +26,40 @@ const useStyles = makeStyles({
   },
 });
 
+
+
 export default function CitySelect() {
-  const classes = useStyles();
+
+
+  const handleOnSearch = (string, results) => {
+    // onSearch will have as the first callback parameter
+    // the string searched and for the second the results.
+    console.log(string, results)
+  }
+
+  const handleOnHover = (result) => {
+    // the item hovered
+    console.log(result)
+  }
+
+  const handleOnSelect = (item) => {
+    // the item selected
+    console.log(item)
+  }
+
+  const handleOnFocus = () => {
+    console.log('Focused')
+  }
+
 
   return (
-    <Autocomplete
-      id="country-select-demo"
-      style={{ width: 300 }}
-      options={countries}
-      classes={{
-        option: classes.option,
-      }}
-      autoHighlight
-      getOptionLabel={(option) => option.label}
-      renderOption={(option) => (
-        <React.Fragment>
-          <span>{countryToFlag(option.code)}</span>
-          {option.label} ({option.code}) +{option.phone}
-        </React.Fragment>
-      )}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label="Choose a country"
-          variant="outlined"
-          inputProps={{
-            ...params.inputProps,
-            autoComplete: 'new-password', // disable autocomplete and autofill
-          }}
-        />
-      )}
+    <ReactSearchAutocomplete
+      items={["test", "a", "b"]}
+      onSearch={handleOnSearch}
+      onHover={handleOnHover}
+      onSelect={handleOnSelect}
+      onFocus={handleOnFocus}
+      autoFocus
     />
   );
 }

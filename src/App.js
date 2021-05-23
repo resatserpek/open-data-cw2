@@ -10,6 +10,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import CitySelect from './CitySelect'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import axios from 'axios'
+import MarkerClusterGroup from 'react-leaflet-markercluster';
+
 
 
 const CustomMarker = (props) => {
@@ -39,6 +41,7 @@ function App() {
 
   return (
     <div>
+
       <AppBar position="static">
         <Toolbar>
           <IconButton edge="start" color="inherit" aria-label="menu">
@@ -48,10 +51,12 @@ function App() {
             City Planner
          </Typography>
 
-          <CitySelect />
 
         </Toolbar>
+
       </AppBar>
+
+    
 
       <MapContainer center={[50.9182575232534, -1.404944127424533]} zoom={13} scrollWheelZoom={true}>
         <TileLayer
@@ -59,11 +64,15 @@ function App() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {incidents.map((incident, index) => {
-          return (
-            <CustomMarker key={index} latitude={incident.location.latitude} longitude={incident.location.longitude} category={incident.category} outcome= {incident.outcome_status ? incident.outcome_status.category : "No outcome"} />
-          )
-        })}
+        <MarkerClusterGroup>
+
+          {incidents.map((incident, index) => {
+            return (
+              <CustomMarker key={index} latitude={incident.location.latitude} longitude={incident.location.longitude} category={incident.category} outcome={incident.outcome_status ? incident.outcome_status.category : "No outcome"} />
+            )
+          })}
+        </MarkerClusterGroup>;
+
       </MapContainer>
 
     </div>
