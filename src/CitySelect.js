@@ -11,7 +11,7 @@ const useStyles = makeStyles({
       marginRight: 10,
       fontSize: 18,
     },
-    
+
   },
 });
 
@@ -41,9 +41,9 @@ export default function CitySelect(props) {
       )}
       renderInput={(params) => (
         <TextField
-        style={{
-          backgroundColor: "white"
-      }}
+          style={{
+            backgroundColor: "white"
+          }}
           {...params}
           label="Choose a city"
           variant="outlined"

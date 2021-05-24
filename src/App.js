@@ -15,6 +15,9 @@ import DatePicker from 'react-datepicker'
 import subDays from "date-fns/subDays";
 import "react-datepicker/dist/react-datepicker.css";
 import L from 'leaflet'
+import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
+
 
 
 
@@ -53,7 +56,9 @@ function App() {
     const map = useMapEvents({
       dragend: (e) => {
         console.log("mapCenter", e.target.getCenter());
+
         setCenter([e.target.getCenter().lat, e.target.getCenter().lng])
+        setCluster(false)
         //setZoom(e.target.getZoom())
         //console.log(e.target.getZoom());
       },
@@ -61,25 +66,17 @@ function App() {
     return null;
   }
 
-  function LayerEventComponent() {
-    const map = useMapEvents({
-      layeradd: (e) => {
-        console.log(e.target);
-      },
-    });
-    return null;
-  }
-
   useEffect(() => {
     //setIncidents([]);
-    console.log(groupRef.current);
-    groupRef.current.markers.refreshClusters()
+
     axios.get(`https://data.police.uk/api/crimes-street/all-crime?lat=${center[0]}&lng=${center[1]}&date=${startDate.getFullYear()}-${startDate.getMonth() + 1}`)
       .then((response) => {
         console.log(response.data);
         setIncidents(response.data)
+        setCluster(true)
+
       });
-     
+
 
   }, [center, startDate]);
 
@@ -116,7 +113,7 @@ function App() {
 
       </AppBar>
 
-
+      {cluster ? null : <LinearProgress color="secondary" />}
 
       <MapContainer center={center} zoom={13} scrollWheelZoom={true}  >
 
@@ -127,7 +124,7 @@ function App() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-       <MarkerClusterGroup removeOutsideVisibleBounds={true} ref={groupRef}>
+        {cluster ? <MarkerClusterGroup removeOutsideVisibleBounds={true} ref={groupRef}>
 
           {incidents.map((incident, index) => {
             return (
@@ -135,8 +132,9 @@ function App() {
             )
           })}
         </MarkerClusterGroup>
-       
-        <MapEventComponent/>
+          : null}
+
+        <MapEventComponent />
         {/* <LayerEventComponent/> */}
       </MapContainer>
 
