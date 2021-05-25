@@ -2,9 +2,13 @@ from flask import (Flask, render_template, request,
                    jsonify, send_from_directory, Response)
 from rdflib import Graph, Literal, RDF, URIRef, Namespace, BNode  # basic RDF handling
 from rdflib.namespace import FOAF, XSD, RDFS  # most common namespaces
+from flask_cors import CORS
+import json
 
 app = Flask(__name__,
             static_folder='client/build', static_url_path='')
+CORS(app)
+
 
 g = Graph()
 g.parse('rent.ttl', format='turtle')
@@ -38,9 +42,12 @@ def prices():
 
     results = g.query(query)
 
-    toPass = []
+    toPass = {}
     for row in results:
-        toPass.append((row.stat, row.value))
+        stat = row.stat
+        val = row.value
+        toPass[stat] = val
+
     return jsonify(toPass)
 
 

@@ -1,23 +1,11 @@
 .leaflet-container {
   width: 100%;
-  height: 100vh;
+  height: 78vh;
 }
 
 .react-datepicker-popper {
   z-index: 9999 !important;
 }
-.container {
-  width: 100%;
-  height: 200px;
-  margin: auto;
-}
 
-.one {
-  width: 80%;
-  height: 200px;
-  float: left;
-}
 
-.two {
-  margin-left: 15%;
-}
+

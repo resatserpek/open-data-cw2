@@ -18,7 +18,12 @@ const useStyles = makeStyles({
 
 export default function CitySelect(props) {
   const classes = useStyles();
-  const [selected, setSelected] = useState();
+  const [selected, setSelected] = useState({
+    "latitude": 50.9049644,
+    "longitude": -1.403234,
+    "areacode": "E06000045",
+    "name": "Southampton"
+  });
 
   return (
     <Autocomplete
@@ -31,6 +36,7 @@ export default function CitySelect(props) {
       }}
       onChange={(event, val) => {
         props.onSelect(val)
+        setSelected(val)
       }}
       autoHighlight
       getOptionLabel={(option) => option.name}
@@ -58,7 +64,7 @@ export default function CitySelect(props) {
 }
 
 // From https://bitbucket.org/atlassian/atlaskit-mk-2/raw/4ad0e56649c3e6c973e226b7efaeb28cb240ccb0/packages/core/select/src/data/countries.js
-const countries = [
+export const countries = [
   {
     "latitude": 50.8356781,
     "longitude": -0.280956,
