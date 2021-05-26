@@ -189,7 +189,7 @@ function App() {
   }, [center, startDate]);
 
   useEffect(() => {
-    axios.get(`http://127.0.0.1:5000/api/prices?type=${rentType}&code=${areaCode}`)
+    axios.get(`/api/prices?type=${rentType}&code=${areaCode}`)
       .then((response) => {
         setRentPrice(response.data)
 
