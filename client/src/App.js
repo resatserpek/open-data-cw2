@@ -204,7 +204,7 @@ function App() {
     setSelectedRents([])
     selectedCities.forEach((value, index) => {
       console.log(value)
-      axios.get(`http://127.0.0.1:5000/api/prices?type=${rentType}&code=${value.areacode}`)
+      axios.get(`/api/prices?type=${rentType}&code=${value.areacode}`)
         .then((response) => {
           setSelectedRents(selectedRents => [...selectedRents, {label: value.name, y: [parseInt(response.data["Lower quartile"]), parseInt(response.data["Lower quartile"]), parseInt(response.data["Upper quartile"]), parseInt(response.data["Upper quartile"]), parseInt(response.data["Median"])]}])
         });
