@@ -34,7 +34,9 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
 import CanvasJSReact from "./canvasjs.react";
+import HelpIcon from '@material-ui/icons/Help';
 import { Checkbox, Chip, FormControl, Input, ListItemText } from "@material-ui/core";
+import CustomPopover from "./CustomPopover";
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -100,14 +102,14 @@ function App() {
   );
 
   const handleChangeCities = (event) => {
-    
+
     setSelectedCities(event.target.value)
   };
 
   const options = {
     animationEnabled: true,
     theme: "light2",
-    
+
     axisY: {
       title: "Price"
     },
@@ -142,7 +144,7 @@ function App() {
     formControl: {
       margin: theme.spacing(1),
       minWidth: 120,
-      
+
     },
     chips: {
       display: 'flex',
@@ -206,9 +208,9 @@ function App() {
       console.log(value)
       axios.get(`/api/prices?type=${rentType}&code=${value.areacode}`)
         .then((response) => {
-          setSelectedRents(selectedRents => [...selectedRents, {label: value.name, y: [parseInt(response.data["Lower quartile"]), parseInt(response.data["Lower quartile"]), parseInt(response.data["Upper quartile"]), parseInt(response.data["Upper quartile"]), parseInt(response.data["Median"])]}])
+          setSelectedRents(selectedRents => [...selectedRents, { label: value.name, y: [parseInt(response.data["Lower quartile"]), parseInt(response.data["Lower quartile"]), parseInt(response.data["Upper quartile"]), parseInt(response.data["Upper quartile"]), parseInt(response.data["Median"])] }])
         });
-      })
+    })
     console.log(selectedRents)
     console.log(selectedCities)
   }, [selectedCities, rentType])
@@ -229,7 +231,10 @@ function App() {
         <Toolbar style={{ display: "flex", justifyContent: "space-around" }}>
           <Typography variant="h6">City Planner</Typography>
 
+
           <CitySelect onSelect={handleSelect} />
+
+
           <div>
             <Typography variant="subtitle1">Select Date</Typography>
             <DatePicker
@@ -244,6 +249,8 @@ function App() {
               showMonthYearPicker
             />
           </div>
+
+          <CustomPopover text={"You can search and select a city from the search bar and select a date to update the crime map."} />
         </Toolbar>
       </AppBar>
 
@@ -253,9 +260,19 @@ function App() {
           <Grid item xs={12} sm={8}>
             <Card className={classes.root}>
               <CardContent>
-                <Typography variant="h5" component="h2" style={{ textAlign: "center" }}>
+                
+                <div style={{ textAlign: "center", display: "block" }}>
+                <Typography variant="h5" component="h2" style={{display: "inline" }}>
                   Crime Rates
                 </Typography>
+                
+                <CustomPopover text={"This map shows clusters of crime occurrences within a 1 mile radius of the center of the map. Drag or select a city to refresh."} />
+                </div>
+
+
+
+                
+                
                 <MapContainer center={center} zoom={13} scrollWheelZoom={true}>
                   <ChangeView center={center} />
 
@@ -293,7 +310,7 @@ function App() {
             </Card>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Card className={classes.root}>
+            <Card className={classes.root} >
 
 
               <CardHeader
@@ -305,6 +322,7 @@ function App() {
                     <MenuItem value="" disabled>
                       Select Rent Type
                   </MenuItem>
+                  
                     {rentTypes.map((type, index) => {
                       return (
                         <MenuItem value={type.val}>{type.name}</MenuItem>
@@ -321,6 +339,7 @@ function App() {
               >
 
               </CardHeader>
+
               <CardContent>
 
 
@@ -343,11 +362,14 @@ function App() {
               <CardHeader
                 title="Rent Comparison"
                 subheader={"Select up to 5 cities to compare"}
+                style={{display: "inline-block"}}
               >
               </CardHeader>
+              <CustomPopover text={"From the dropdown list, select up to 5 cities to compare. Cities with no data will show up empty on the graph."} />
+
               <CardContent>
 
-                  <FormControl className={classes.formControl} style={{width: "100%"}}>
+                <FormControl className={classes.formControl} style={{ width: "100%" }}>
                   <InputLabel id="demo-mutiple-chip-label">Selected Cities</InputLabel>
                   <Select
                     labelId="demo-mutiple-chip-label"
@@ -358,13 +380,13 @@ function App() {
                     input={<Input id="select-multiple-chip" />}
                     renderValue={(selected) => (
                       <div className={classes.chips}>
-                        {selected.map((value,index) => (
+                        {selected.map((value, index) => (
                           <Chip key={index} label={value.name} className={classes.chip} />
                         ))}
                       </div>
                     )}
                     MenuProps={MenuProps}
-                    
+
                   >
                     {countries.map((city, index) => (
                       <MenuItem key={index} value={city}>
@@ -374,7 +396,7 @@ function App() {
                   </Select>
                 </FormControl>
 
-                
+
                 <CanvasJSChart options={options}
                 /* onRef={ref => this.chart = ref} */
                 />
