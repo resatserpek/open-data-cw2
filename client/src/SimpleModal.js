@@ -61,7 +61,7 @@ export default function SimpleModal() {
   return (
     <div>
 
-    <IconButton onClick={handleOpen}>
+    <IconButton color="inherit" onClick={handleOpen}>
         <HelpIcon></HelpIcon>
     </IconButton>
 

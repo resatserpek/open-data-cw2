@@ -248,7 +248,6 @@ function App() {
             />
           </div>
 
-          <CustomPopover text={"You can search and select a city from the search bar and select a date to update the crime map."} />
           <SimpleModal />
         </Toolbar>
       </AppBar>
