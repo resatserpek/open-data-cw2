@@ -47,9 +47,13 @@ export default function SimpleModal() {
 
   const body = (
     <div style={modalStyle} className={classes.paper}>
-      <h2 id="simple-modal-title">Text in a modal</h2>
+      <h2 id="simple-modal-title">How to use</h2>
       <p id="simple-modal-description">
-        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          <ol>
+              <li>Select your city or drag and drop in the map</li>
+              <li>Select the date for crime rates</li>
+              <li>Select more cities to compare with your initial city</li>
+          </ol>
       </p>
     </div>
   );
