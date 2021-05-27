@@ -4,12 +4,12 @@ import "./App.css";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import SimpleModal from './SimpleModal'
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
+import SimpleModal from "./SimpleModal";
+import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
+import CardContent from "@material-ui/core/CardContent";
+import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core/styles";
 import CitySelect, { countries } from "./CitySelect";
 import {
   MapContainer,
@@ -28,16 +28,22 @@ import L from "leaflet";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Select from "@material-ui/core/Select";
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Divider from '@material-ui/core/Divider';
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Divider from "@material-ui/core/Divider";
+import MuiAlert from "@material-ui/lab/Alert";
 import CanvasJSReact from "./canvasjs.react";
-import HelpIcon from '@material-ui/icons/Help';
-import { Checkbox, Chip, FormControl, Input, ListItemText } from "@material-ui/core";
+import HelpIcon from "@material-ui/icons/Help";
+import {
+  Checkbox,
+  Chip,
+  FormControl,
+  Input,
+  ListItemText,
+} from "@material-ui/core";
 import CustomPopover from "./CustomPopover";
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
-
 
 const CustomMarker = (props) => {
   return (
@@ -69,8 +75,15 @@ const MenuProps = {
 };
 
 function App() {
-  const rentTypes = [{ val: "room", name: "Room" }, { val: "studio", name: "Studio" }, { val: "oneBedroom", name: "One Bedroom" }, { val: "twoBedrooms", name: "Two Bedrooms" },
-  { val: "threeBedrooms", name: "Three Bedrooms" }, { val: "fourPlusBedrooms", name: "Four or More Bedrooms" }, { val: "allCategories", name: "All Categories" }];
+  const rentTypes = [
+    { val: "room", name: "Room" },
+    { val: "studio", name: "Studio" },
+    { val: "oneBedroom", name: "One Bedroom" },
+    { val: "twoBedrooms", name: "Two Bedrooms" },
+    { val: "threeBedrooms", name: "Three Bedrooms" },
+    { val: "fourPlusBedrooms", name: "Four or More Bedrooms" },
+    { val: "allCategories", name: "All Categories" },
+  ];
 
   var dateRangeMax = new Date(parseInt("2021"), parseInt("02"));
   var dateRangeMin = new Date(parseInt("2018"), parseInt("04"));
@@ -79,29 +92,34 @@ function App() {
   const [center, setCenter] = useState([50.9182575232534, -1.404944127424533]);
   const [zoom, setZoom] = useState(13);
   const [cluster, setCluster] = useState(true);
+  const [limitReached, setLimitReached] = useState(false);
   const [rentType, setRentType] = useState("room");
   const [areaCode, setAreaCode] = useState("E06000045");
   const [cityName, setCityName] = useState("Southampton");
   const [rentPrice, setRentPrice] = useState();
   const [selectedCities, setSelectedCities] = useState([
     {
-      "latitude": center[0],
-      "longitude": center[1],
-      "areacode": areaCode,
-      "name": cityName
-    }
-  ])
+      latitude: center[0],
+      longitude: center[1],
+      areacode: areaCode,
+      name: cityName,
+    },
+  ]);
 
   const [selectedRents, setSelectedRents] = useState([]);
-
 
   const [startDate, setStartDate] = useState(
     new Date(parseInt("2021"), parseInt("02"))
   );
 
   const handleChangeCities = (event) => {
-
-    setSelectedCities(event.target.value)
+    if (event.target.value.length > 5) {
+      setLimitReached(true);
+      console.log(event);
+    } else {
+      setSelectedCities(event.target.value);
+      setLimitReached(false);
+    }
   };
 
   const options = {
@@ -109,31 +127,33 @@ function App() {
     theme: "light2",
 
     axisY: {
-      title: "Price"
+      title: "Price",
     },
-    data: [{
-      type: "boxAndWhisker",
-      color: "black",
-      upperBoxColor: "#A3A3A3",
-      lowerBoxColor: "#494949",
-      yValueFormatString: "###.0# £",
-      dataPoints: selectedRents
-    }]
-  }
+    data: [
+      {
+        type: "boxAndWhisker",
+        color: "black",
+        upperBoxColor: "#A3A3A3",
+        lowerBoxColor: "#494949",
+        yValueFormatString: "###.0# £",
+        dataPoints: selectedRents,
+      },
+    ],
+  };
 
   const handleType = (event) => {
     console.log(event.target.value);
-    setRentType(event.target.value)
-  }
+    setRentType(event.target.value);
+  };
 
   const useStyles = makeStyles((theme) => ({
     root: {
       flexGrow: 1,
-      padding: '1%',
+      padding: "1%",
     },
     paper: {
       padding: theme.spacing(2),
-      textAlign: 'center',
+      textAlign: "center",
       color: theme.palette.text.secondary,
     },
     pos: {
@@ -142,11 +162,10 @@ function App() {
     formControl: {
       margin: theme.spacing(1),
       minWidth: 120,
-
     },
     chips: {
-      display: 'flex',
-      flexWrap: 'wrap',
+      display: "flex",
+      flexWrap: "wrap",
     },
     chip: {
       margin: 2,
@@ -172,13 +191,26 @@ function App() {
     return null;
   }
 
+  function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setLimitReached(false);
+  };
+
   useEffect(() => {
     //setIncidents([]);
 
     axios
       .get(
-        `https://data.police.uk/api/crimes-street/all-crime?lat=${center[0]
-        }&lng=${center[1]}&date=${startDate.getFullYear()}-${startDate.getMonth() + 1
+        `https://data.police.uk/api/crimes-street/all-crime?lat=${
+          center[0]
+        }&lng=${center[1]}&date=${startDate.getFullYear()}-${
+          startDate.getMonth() + 1
         }`
       )
       .then((response) => {
@@ -189,37 +221,50 @@ function App() {
   }, [center, startDate]);
 
   useEffect(() => {
-    axios.get(`/api/prices?type=${rentType}&code=${areaCode}`)
+    axios
+      .get(`/api/prices?type=${rentType}&code=${areaCode}`)
       .then((response) => {
-        setRentPrice(response.data)
-
+        setRentPrice(response.data);
       });
-  }, [areaCode, rentType])
+  }, [areaCode, rentType]);
 
   useEffect(() => {
     setIncidents([]);
   }, [center]);
 
   useEffect(() => {
-    setSelectedRents([])
+    setSelectedRents([]);
     selectedCities.forEach((value, index) => {
-      console.log(value)
-      axios.get(`/api/prices?type=${rentType}&code=${value.areacode}`)
+      //console.log(value)
+      axios
+        .get(`/api/prices?type=${rentType}&code=${value.areacode}`)
         .then((response) => {
-          setSelectedRents(selectedRents => [...selectedRents, { label: value.name, y: [parseInt(response.data["Lower quartile"]), parseInt(response.data["Lower quartile"]), parseInt(response.data["Upper quartile"]), parseInt(response.data["Upper quartile"]), parseInt(response.data["Median"])] }])
+          setSelectedRents((selectedRents) => [
+            ...selectedRents,
+            {
+              label: value.name,
+              y: [
+                parseInt(response.data["Lower quartile"]),
+                parseInt(response.data["Lower quartile"]),
+                parseInt(response.data["Upper quartile"]),
+                parseInt(response.data["Upper quartile"]),
+                parseInt(response.data["Median"]),
+              ],
+            },
+          ]);
         });
-    })
-    console.log(selectedRents)
-    console.log(selectedCities)
-  }, [selectedCities, rentType])
+    });
+    //console.log(selectedRents)
+    //console.log(selectedCities)
+  }, [selectedCities, rentType]);
 
   const handleSelect = (val) => {
     console.log(val);
     if (val) {
       setCenter([val.latitude, val.longitude]);
-      setAreaCode(val.areacode)
-      setCityName(val.name)
-      setSelectedCities([val])
+      setAreaCode(val.areacode);
+      setCityName(val.name);
+      setSelectedCities([val]);
     }
   };
 
@@ -229,9 +274,7 @@ function App() {
         <Toolbar style={{ display: "flex", justifyContent: "space-around" }}>
           <Typography variant="h6">City Planner</Typography>
 
-
           <CitySelect onSelect={handleSelect} />
-
 
           <div>
             <Typography variant="subtitle1">Select Date</Typography>
@@ -258,19 +301,22 @@ function App() {
           <Grid item xs={12} sm={8}>
             <Card className={classes.root}>
               <CardContent>
-                
                 <div style={{ textAlign: "center", display: "block" }}>
-                <Typography variant="h5" component="h2" style={{display: "inline" }}>
-                  Crime Rates
-                </Typography>
-                
-                <CustomPopover text={"This map shows clusters of crime occurrences within a 1 mile radius of the center of the map. Drag or select a city to refresh."} />
+                  <Typography
+                    variant="h5"
+                    component="h2"
+                    style={{ display: "inline" }}
+                  >
+                    Crime Rates
+                  </Typography>
+
+                  <CustomPopover
+                    text={
+                      "This map shows clusters of crime occurrences within a 1 mile radius of the center of the map. Drag or select a city to refresh."
+                    }
+                  />
                 </div>
 
-
-
-                
-                
                 <MapContainer center={center} zoom={13} scrollWheelZoom={true}>
                   <ChangeView center={center} />
 
@@ -280,9 +326,7 @@ function App() {
                   />
 
                   {cluster ? (
-                    <MarkerClusterGroup
-                      removeOutsideVisibleBounds={true}
-                    >
+                    <MarkerClusterGroup removeOutsideVisibleBounds={true}>
                       {incidents.map((incident, index) => {
                         return (
                           <CustomMarker
@@ -303,72 +347,76 @@ function App() {
 
                   <MapEventComponent />
                 </MapContainer>
-
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Card className={classes.root} >
-
-
+            <Card className={classes.root}>
               <CardHeader
                 action={
-                  <Select
-                    value={rentType}
-                    onChange={handleType}
-                  >
+                  <Select value={rentType} onChange={handleType}>
                     <MenuItem value="" disabled>
                       Select Rent Type
-                  </MenuItem>
-                  
+                    </MenuItem>
+
                     {rentTypes.map((type, index) => {
-                      return (
-                        <MenuItem value={type.val}>{type.name}</MenuItem>
-                      )
-                    }
-                    )
-                    }
-
+                      return <MenuItem value={type.val}>{type.name}</MenuItem>;
+                    })}
                   </Select>
-
                 }
                 title="Rent Prices (Monthly)"
                 subheader={cityName}
-              >
-
-              </CardHeader>
+              ></CardHeader>
 
               <CardContent>
-
-
-
                 <Grid container spacing={3}>
-                  {rentPrice && Object.keys(rentPrice).map((keyName, keyIndex) => {
-                    // use keyName to get current key's name
-                    // and a[keyName] to get its value
-                    return (
-                      <Grid item xs={6}>
-                        <Typography className={classes.pos} color="textSecondary">{keyName} </Typography>
-                        <Typography variant="h5" component="h2">{!isNaN(parseInt(rentPrice[keyName])) ? "£" + rentPrice[keyName] : "No Data"} </Typography>
-                      </Grid>
-                    )
-
-                  })}
+                  {rentPrice &&
+                    Object.keys(rentPrice).map((keyName, keyIndex) => {
+                      // use keyName to get current key's name
+                      // and a[keyName] to get its value
+                      return (
+                        <Grid item xs={6}>
+                          <Typography
+                            className={classes.pos}
+                            color="textSecondary"
+                          >
+                            {keyName}{" "}
+                          </Typography>
+                          <Typography variant="h5" component="h2">
+                            {!isNaN(parseInt(rentPrice[keyName]))
+                              ? "£" + rentPrice[keyName]
+                              : "No Data"}{" "}
+                          </Typography>
+                        </Grid>
+                      );
+                    })}
                 </Grid>
               </CardContent>
               <Divider />
               <CardHeader
                 title="Rent Comparison"
                 subheader={"Select up to 5 cities to compare"}
-                style={{display: "inline-block"}}
-              >
-              </CardHeader>
-              <CustomPopover text={"From the dropdown list, select up to 5 cities to compare. Cities with no data will show up empty on the graph."} />
+                style={{ display: "inline-block" }}
+              ></CardHeader>
+              <CustomPopover
+                text={
+                  "From the dropdown list, select up to 5 cities to compare. Cities with no data will show up empty on the graph."
+                }
+              />
 
               <CardContent>
-
-                <FormControl className={classes.formControl} style={{ width: "100%" }}>
-                  <InputLabel id="demo-mutiple-chip-label">Selected Cities</InputLabel>
+                {limitReached ? (
+                  <Alert onClose={handleClose} severity="info">
+                    Please unselect a city before selecting another one.
+                  </Alert>
+                ) : null}
+                <FormControl
+                  className={classes.formControl}
+                  style={{ width: "100%" }}
+                >
+                  <InputLabel id="demo-mutiple-chip-label">
+                    Selected Cities
+                  </InputLabel>
                   <Select
                     labelId="demo-mutiple-chip-label"
                     id="demo-mutiple-chip"
@@ -379,12 +427,15 @@ function App() {
                     renderValue={(selected) => (
                       <div className={classes.chips}>
                         {selected.map((value, index) => (
-                          <Chip key={index} label={value.name} className={classes.chip} />
+                          <Chip
+                            key={index}
+                            label={value.name}
+                            className={classes.chip}
+                          />
                         ))}
                       </div>
                     )}
                     MenuProps={MenuProps}
-
                   >
                     {countries.map((city, index) => (
                       <MenuItem key={index} value={city}>
@@ -394,17 +445,14 @@ function App() {
                   </Select>
                 </FormControl>
 
-
-                <CanvasJSChart options={options}
-                /* onRef={ref => this.chart = ref} */
+                <CanvasJSChart
+                  options={options}
+                  /* onRef={ref => this.chart = ref} */
                 />
               </CardContent>
-
             </Card>
-
           </Grid>
         </Grid>
-
       </div>
     </div>
   );
