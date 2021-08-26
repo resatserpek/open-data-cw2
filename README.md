@@ -9,3 +9,5 @@ We have produced a web application which show rental and crime data in UK cities
 
 ## Live Demo on Heroku Server
 https://innovation-cw2.herokuapp.com/
+
+* Please note that it takes a small amount time for the server to wake up
